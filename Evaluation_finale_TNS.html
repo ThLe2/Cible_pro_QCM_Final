@@ -1,0 +1,506 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Évaluation finale — Les statuts des TNS</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=Karla:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --navy:#16243B; --blue:#1F4E79; --blue-2:#2E75B6; --paper:#F5F2EB;
+    --card:#FFFFFF; --ink:#1d2733; --muted:#5d6b7a; --line:#e3ddd0; --gold:#B08D57;
+    --ok:#2F7A4F; --ok-bg:#EAF4ED; --ko:#B23B3B; --ko-bg:#FAEDED;
+    --amber:#B5852A; --amber-bg:#FBF1DC;
+    --shadow:0 1px 2px rgba(22,36,59,.05),0 8px 24px rgba(22,36,59,.06);
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:'Karla',-apple-system,system-ui,sans-serif;background:var(--paper);color:var(--ink);line-height:1.6;-webkit-font-smoothing:antialiased}
+  .wrap{max-width:860px;margin:0 auto;padding:28px 20px 64px}
+  .card-main{background:var(--card);border:1px solid var(--line);border-radius:16px;box-shadow:var(--shadow);overflow:hidden}
+  .header{background:var(--navy);color:#fff;padding:30px 34px}
+  .chapter-tag{display:inline-block;background:rgba(255,255,255,.14);color:#e9eef6;padding:5px 13px;border-radius:99px;font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;margin-bottom:14px}
+  .chapter-tag span{color:var(--gold)}
+  .header h1{font-family:'Fraunces',Georgia,serif;font-weight:600;font-size:clamp(23px,4.2vw,33px);line-height:1.14;letter-spacing:-.01em;margin-bottom:8px}
+  .header p{font-size:14px;color:#b9c4d4}
+  .gold-rule{height:3px;width:60px;background:var(--gold);border:0;margin:16px 0 0}
+  .body{padding:30px 34px}
+  .identity{text-align:center;padding:14px 0}
+  .identity h2{font-family:'Fraunces',serif;font-weight:600;font-size:21px;color:var(--navy);margin-bottom:8px}
+  .identity p.sub{color:var(--muted);margin-bottom:26px;font-size:14.5px}
+  .form-group{margin-bottom:16px;text-align:left;max-width:420px;margin-left:auto;margin-right:auto}
+  .form-group label{display:block;font-size:13px;font-weight:700;color:var(--navy);margin-bottom:6px;letter-spacing:.02em}
+  .form-group input{width:100%;padding:12px 14px;border:1.5px solid var(--line);border-radius:9px;font-size:15px;font-family:'Karla',sans-serif;transition:border-color .2s;background:#fdfcf9}
+  .form-group input:focus{outline:none;border-color:var(--blue-2)}
+  .btn{cursor:pointer;font-family:'Karla',sans-serif;font-weight:700;font-size:15px;letter-spacing:.03em;border-radius:10px;transition:transform .12s,box-shadow .15s,filter .15s,background .15s}
+  .btn-primary{background:var(--blue);color:#fff;border:none;padding:13px 34px;margin:6px}
+  .btn-primary:hover:not(:disabled){transform:translateY(-2px);box-shadow:0 8px 20px rgba(31,78,121,.28)}
+  .btn-primary:disabled{opacity:.45;cursor:not-allowed}
+  .btn-gold{background:var(--gold);color:var(--navy)}
+  .btn-gold:hover:not(:disabled){filter:brightness(1.06);transform:translateY(-2px)}
+  .btn-secondary{background:#fff;color:var(--blue);border:1.5px solid var(--blue);padding:11px 28px;margin:6px}
+  .btn-secondary:hover:not(:disabled){background:#f0f4f9}
+  .btn-secondary:disabled{opacity:.4;cursor:not-allowed;border-color:#bbb;color:#bbb}
+  .stagiaire-bar{background:#efeadf;padding:11px 34px;border-bottom:1px solid var(--line);font-size:13px;color:var(--muted);display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}
+  .stagiaire-bar strong{color:var(--navy)}
+  .consigne{background:#fff;border:1px solid var(--line);border-left:4px solid var(--gold);border-radius:10px;padding:12px 16px;margin-bottom:20px;font-size:13.5px;line-height:1.5;color:#3a4654}
+  .consigne b{color:var(--navy)}
+  .meta{display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;margin-bottom:18px}
+  .progress{flex:1;min-width:180px}
+  .progress .track{height:8px;background:#e6e0d3;border-radius:99px;overflow:hidden}
+  .progress .fill{height:100%;width:0;background:var(--blue-2);border-radius:99px;transition:width .4s cubic-bezier(.2,.7,.2,1)}
+  .progress .plabel{font-size:12.5px;color:var(--muted);margin-top:6px}
+  .scorepill{font-family:'Fraunces',serif;font-weight:600;color:var(--navy);background:#fff;border:1px solid var(--line);border-radius:99px;padding:7px 15px;font-size:14.5px}
+  .scorepill b{color:var(--blue);font-size:17px}
+  .cq{background:#fff;border:1px solid var(--line);border-radius:11px;padding:16px 18px;margin-bottom:13px;box-shadow:var(--shadow)}
+  .cq .ask{font-weight:600;font-size:15px;color:var(--ink);margin-bottom:10px;display:flex;gap:10px;align-items:flex-start}
+  .cq .ask .qn{flex:none;width:26px;height:26px;border-radius:50%;background:var(--navy);color:#fff;font-family:'Fraunces',serif;font-weight:600;font-size:13px;display:flex;align-items:center;justify-content:center;margin-top:1px}
+  .theme-tag{display:inline-block;background:#eef3f9;color:var(--blue);font-size:11px;font-weight:700;border-radius:5px;padding:2px 8px;margin-left:8px;letter-spacing:.02em;vertical-align:middle;white-space:nowrap}
+  .multi-tag{display:inline-block;background:#fbf1dc;color:var(--amber);font-size:11px;font-weight:700;border-radius:5px;padding:2px 8px;margin-left:6px;letter-spacing:.02em;vertical-align:middle;white-space:nowrap}
+  select.cs{width:100%;padding:11px 13px;border:1.5px solid var(--line);border-radius:9px;font-size:14.5px;font-family:'Karla',sans-serif;background:#fdfcf9;color:var(--ink);cursor:pointer;transition:border-color .15s}
+  select.cs:focus{outline:none;border-color:var(--blue-2)}
+  select.cs:disabled{cursor:default;opacity:1}
+  select.cs.ok{border-color:var(--ok);background:var(--ok-bg);color:var(--ok)}
+  select.cs.ko{border-color:var(--ko);background:var(--ko-bg);color:var(--ko)}
+  .checks{display:flex;flex-direction:column;gap:8px}
+  .checks label{display:flex;gap:10px;align-items:flex-start;border:1.5px solid var(--line);border-radius:9px;padding:10px 13px;background:#fdfcf9;cursor:pointer;font-size:14.5px;transition:.15s}
+  .checks label:hover{border-color:var(--blue-2)}
+  .checks label.ok{border-color:var(--ok);background:var(--ok-bg)}
+  .checks label.ko{border-color:var(--ko);background:var(--ko-bg)}
+  .checks input{margin-top:3px}
+  .open-tag{display:inline-block;background:#eaf4ed;color:var(--ok);font-size:11px;font-weight:700;border-radius:5px;padding:2px 8px;margin-left:6px;letter-spacing:.02em;vertical-align:middle;white-space:nowrap}
+  textarea.oa{width:100%;min-height:96px;padding:11px 13px;border:1.5px solid var(--line);border-radius:9px;font-size:14.5px;font-family:'Karla',sans-serif;background:#fdfcf9;color:var(--ink);resize:vertical;line-height:1.5}
+  textarea.oa:focus{outline:none;border-color:var(--blue-2)}
+  textarea.oa:disabled{cursor:default;opacity:1;background:#f7f5ef;border-color:var(--gold)}
+  .oa-hint{font-size:11.5px;color:var(--muted);margin-top:5px;font-style:italic}
+  .model{background:#f7f5ef;border:1px solid var(--gold);border-radius:9px;padding:13px 15px;margin-top:11px}
+  .model h5{margin:0 0 7px;font-family:'Fraunces',Georgia,serif;font-size:14px;color:var(--navy)}
+  .model p{margin:0 0 7px;font-size:13.5px;line-height:1.55}
+  .model ul{margin:6px 0 0;padding-left:17px;font-size:13px}
+  .model li{margin-bottom:3px}
+  .model .ref{color:var(--gold);font-weight:700;font-size:11.5px}
+  .model .note{font-size:12px;color:var(--muted);font-style:italic;margin-top:8px;padding-top:7px;border-top:1px dashed var(--line)}
+  .pass-banner{border-radius:10px;padding:15px 18px;margin:14px 0 4px;font-size:14.5px;line-height:1.55}
+  .pass-banner.ok{background:var(--ok-bg);border:1.5px solid var(--ok);color:#1f5c39}
+  .pass-banner.ko{background:var(--amber-bg);border:1.5px solid var(--amber);color:#8a6420}
+  .pass-banner b{display:block;font-family:'Fraunces',Georgia,serif;font-size:16px;margin-bottom:5px}
+  .cfb{max-height:0;overflow:hidden;opacity:0;transition:max-height .4s,opacity .35s;font-size:13px;border-left:3px solid var(--line);padding-left:14px}
+  .cfb.show{max-height:320px;opacity:1;margin-top:12px}
+  .cfb.good{border-color:var(--ok);color:#1c5234} .cfb.bad{border-color:var(--ko);color:#7a2222}
+  .cfb .vd{font-weight:700}
+  .cfb .ref{display:inline-block;margin-top:6px;font-size:12px;color:var(--blue);background:#eef3f9;border-radius:6px;padding:2px 8px;font-weight:600}
+  .actions{margin-top:24px;text-align:center}
+  .result-screen{text-align:center;padding:20px 0}
+  .score-circle{width:132px;height:132px;border-radius:50%;margin:0 auto 18px;display:flex;flex-direction:column;align-items:center;justify-content:center;color:#fff;box-shadow:0 8px 24px rgba(22,36,59,.18)}
+  .score-circle.excellent{background:var(--ok)} .score-circle.good{background:var(--blue)}
+  .score-circle.average{background:var(--amber)} .score-circle.poor{background:var(--ko)}
+  .score-circle .sv{font-family:'Fraunces',serif;font-size:30px;font-weight:600}
+  .score-circle .sl{font-size:12px;opacity:.95;margin-top:2px;letter-spacing:.05em}
+  .result-msg{font-family:'Fraunces',serif;font-size:21px;font-weight:600;margin-bottom:8px;color:var(--navy)}
+  .result-detail{color:var(--muted);font-size:14px;margin-bottom:20px;max-width:56ch;margin-left:auto;margin-right:auto}
+  .recap{text-align:left;max-width:600px;margin:0 auto 8px}
+  .recap h4{font-family:'Fraunces',serif;font-weight:600;font-size:15px;color:var(--navy);margin-bottom:6px}
+  .recap-row{display:flex;align-items:center;gap:11px;padding:9px 4px;border-bottom:1px solid var(--line);font-size:13.5px}
+  .recap-row .dot{flex:none;width:11px;height:11px;border-radius:50%}
+  .recap-row .lab{flex:1;color:var(--ink)}
+  .recap-row .sc{font-weight:700;color:var(--navy);font-variant-numeric:tabular-nums}
+  .recap-row .hint{flex-basis:100%;font-size:12px;color:var(--blue);padding-left:22px}
+  .pdf-info{background:var(--amber-bg);border-left:4px solid var(--amber);padding:12px 16px;border-radius:8px;text-align:left;font-size:13px;color:#6d4c00;margin:18px 0}
+  .pdf-info strong{display:block;margin-bottom:4px}
+  .note{background:#eef3f9;border-left:4px solid var(--blue-2);padding:12px 16px;border-radius:8px;text-align:left;font-size:13px;color:var(--blue);margin:16px 0;line-height:1.5}
+  footer{margin-top:26px;text-align:center;font-size:12px;color:#9a9384;letter-spacing:.04em}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="card-main">
+    <div class="header">
+      <div class="chapter-tag">TMK Performances · Fondamentaux Cible Pro — Les statuts des TNS <span>/</span> Évaluation finale</div>
+      <h1>Évaluation finale — Les statuts des TNS</h1>
+      <p>30 questions à choix + 5 questions ouvertes · seuil de réussite 60 %</p>
+      <hr class="gold-rule">
+    </div>
+
+    <div id="screen-identity" class="body">
+      <div class="identity">
+        <h2>Avant de commencer</h2>
+        <p class="sub">Renseignez vos informations pour personnaliser votre attestation de réussite.</p>
+        <div class="form-group"><label for="nom">Nom</label><input type="text" id="nom" placeholder="Votre nom de famille" autocomplete="family-name"></div>
+        <div class="form-group"><label for="prenom">Prénom</label><input type="text" id="prenom" placeholder="Votre prénom" autocomplete="given-name"></div>
+        <button class="btn btn-primary" id="btn-start" disabled onclick="startQuiz()">Commencer l'évaluation</button>
+      </div>
+    </div>
+
+    <div id="screen-quiz" style="display:none;">
+      <div class="stagiaire-bar"><span>Stagiaire&nbsp;: <strong id="stagiaire-name"></strong></span><span id="date-quiz"></span></div>
+      <div class="body">
+        <div class="consigne"><b>🎓 Évaluation finale du module.</b> Elle couvre les cinq séquences : les statuts, les cotisations (et le PASS), les prestations du régime obligatoire, les déficits de protection et les contrats Madelin. Certaines questions appellent <b>plusieurs réponses</b> (signalées). Les cinq dernières sont des <b>questions ouvertes</b> rédigées : la réponse attendue s'affiche après validation, elles ne sont pas notées automatiquement.<br><br><b>Seuil de réussite : 60 %</b> sur la partie à choix. À la validation, votre attestation PDF est générée : déposez-la sur le LMS.</div>
+        <div class="meta">
+          <div class="progress"><div class="track"><div class="fill" id="fill"></div></div><div class="plabel" id="plabel">0 / 35 répondu</div></div>
+          <div class="scorepill">Score&nbsp;: <b id="score">—</b> / 30</div>
+        </div>
+        <div id="qcm"></div>
+        <div class="actions"><button class="btn btn-primary" id="btn-validate" disabled onclick="validateQuiz()">Validation et génération du PDF</button></div>
+      </div>
+    </div>
+
+    <div id="screen-result" style="display:none;">
+      <div class="stagiaire-bar"><span>Stagiaire&nbsp;: <strong id="stagiaire-name-2"></strong></span><span id="date-quiz-2"></span></div>
+      <div class="body">
+        <div class="result-screen">
+          <div class="score-circle" id="score-circle"><div class="sv" id="score-value">0/30</div><div class="sl" id="score-label">questions</div></div>
+          <div class="result-msg" id="result-message"></div>
+          <div id="pass-banner" style="display:none;"></div>
+          <div class="result-detail" id="result-detail"></div>
+          <div class="recap" id="recap-block"><h4>Bilan par thème</h4><div id="recap-list"></div></div>
+          <div class="note" id="note-pdf" style="display:none;"></div>
+          <div class="actions">
+            <button class="btn btn-secondary" id="btn-restart" onclick="restartQuiz()">↻ Refaire l'évaluation</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <footer>TMK Performances · Fondamentaux Cible Pro · Évaluation finale — Les statuts des TNS</footer>
+  </div>
+</div>
+
+<script>
+const CFG = {"THEME_INFO": {"1": {"label": "Les statuts"}, "2": {"label": "Cotisations & PASS"}, "3": {"label": "Prestations du régime obligatoire"}, "4": {"label": "Déficits de protection"}, "5": {"label": "Les contrats Madelin"}}, "THEME_ORDER": ["1", "2", "3", "4", "5"], "QUESTIONS": [{"th": "1", "kind": "qcm", "ask": "Combien de statuts principaux de TNS distingue-t-on ?", "options": ["Deux", "Trois", "Quatre", "Six"], "correct": [2], "multi": false, "expl": "Quatre : artisan, commerçant, profession libérale et gérant de société.", "ref": "statuts"}, {"th": "1", "kind": "qcm", "ask": "L'artisan est immatriculé :", "options": ["Au registre du commerce et des sociétés", "Au répertoire des métiers (CMA)", "À l'ordre des professions libérales", "Au tribunal de commerce"], "correct": [1], "multi": false, "expl": "L'artisan est immatriculé au répertoire des métiers (Chambre des métiers et de l'artisanat).", "ref": "artisan"}, {"th": "1", "kind": "qcm", "ask": "Depuis le 1er janvier 2018, la protection sociale des indépendants relève :", "options": ["D'un régime spécial autonome (RSI)", "Du régime général, via la SSI", "Du régime agricole (MSA)", "D'aucun régime"], "correct": [1], "multi": false, "expl": "Depuis 2018, la protection sociale des indépendants est rattachée au régime général via la SSI (interlocuteurs CPAM, Carsat, Urssaf).", "ref": "SSI"}, {"th": "1", "kind": "qcm", "ask": "Dans une EURL, le gérant :", "options": ["Est automatiquement TNS", "Est automatiquement salarié", "N'a aucun statut social", "Choisit chaque année"], "correct": [0], "multi": false, "expl": "L'EURL est une SARL à associé unique : son gérant est automatiquement TNS.", "ref": "gérant"}, {"th": "1", "kind": "qcm", "ask": "Dans une SARL, est TNS :", "options": ["Tout gérant, même minoritaire", "L'associé majoritaire (plus de 50 % du capital)", "Le seul président", "Aucun associé"], "correct": [1], "multi": false, "expl": "L'associé majoritaire d'une SARL (plus de 50 % du capital) est TNS.", "ref": "gérant"}, {"th": "1", "kind": "qcm", "ask": "Par rapport au salarié, de quoi le TNS ne bénéficie-t-il pas ? (plusieurs réponses)", "options": ["D'un bulletin de paie", "De congés payés", "De l'assurance chômage", "D'un régime maladie de base"], "correct": [0, 1, 2], "multi": true, "expl": "Le TNS n'a ni bulletin de paie, ni congés payés, ni assurance chômage. Il a bien un régime maladie de base (aligné sur les salariés).", "ref": "TNS/salarié"}, {"th": "2", "kind": "qcm", "ask": "Depuis 2026, les cotisations du TNS sont calculées sur :", "options": ["Le revenu net après cotisations", "Une assiette unique = revenu abattu de 26 %", "Le chiffre d'affaires", "Une base forfaitaire"], "correct": [1], "multi": false, "expl": "La réforme 2026 crée une assiette unique : le revenu fait l'objet d'un abattement forfaitaire de 26 %.", "ref": "réforme 2026"}, {"th": "2", "kind": "qcm", "ask": "L'abattement de 26 % est encadré entre :", "options": ["0 et 100 % du PASS", "1,76 % et 130 % du PASS", "10 % et 50 % du revenu", "Il n'est pas encadré"], "correct": [1], "multi": false, "expl": "L'abattement ne peut être inférieur à 1,76 % du PASS ni supérieur à 130 % du PASS.", "ref": "abattement"}, {"th": "2", "kind": "qcm", "ask": "Les cotisations sociales du TNS sont recouvrées par :", "options": ["La CPAM", "L'Urssaf", "La Carsat", "La CAF"], "correct": [1], "multi": false, "expl": "L'Urssaf recouvre les cotisations et contributions sociales.", "ref": "Urssaf"}, {"th": "2", "kind": "qcm", "ask": "La cotisation maladie du TNS se lit en deux parts :", "options": ["Maladie et vieillesse", "Maladie 1 (santé/maternité) et maladie 2 (indemnités journalières)", "Maladie et invalidité", "Maladie salarié et maladie dirigeant"], "correct": [1], "multi": false, "expl": "Maladie 1 = maladie-maternité ; maladie 2 = indemnités journalières.", "ref": "maladie"}, {"th": "2", "kind": "qcm", "ask": "La cotisation minimale de retraite de base se calcule sur une assiette égale à :", "options": ["1 PASS", "450 fois le SMIC horaire (au 1er janvier)", "Le SMIC mensuel", "10 % du PASS"], "correct": [1], "multi": false, "expl": "Le minimum de retraite de base est calculé sur 450 fois le SMIC horaire en vigueur au 1er janvier.", "ref": "minimum retraite"}, {"th": "2", "kind": "qcm", "ask": "Le PASS (plafond annuel de la Sécurité sociale) sert à :", "options": ["Fixer le salaire minimum", "Exprimer les assiettes et plafonds en multiples (1, 4, 5 PASS)", "Calculer la TVA", "Déterminer l'impôt"], "correct": [1], "multi": false, "expl": "Le PASS est une règle de mesure : la plupart des assiettes et plafonds s'expriment en multiples du PASS.", "ref": "PASS"}, {"th": "3", "kind": "qcm", "ask": "Pour les frais de santé, le régime de base du TNS :", "options": ["Rembourse mieux que les salariés", "Est aligné sur celui des salariés (mêmes taux)", "Ne rembourse rien", "Impose une complémentaire"], "correct": [1], "multi": false, "expl": "Le régime maladie de base du TNS est aligné sur celui des salariés.", "ref": "santé"}, {"th": "3", "kind": "qcm", "ask": "Les indemnités journalières maladie de la SSI sont versées :", "options": ["Dès le premier jour d'activité", "Après un an d'affiliation, sous condition de revenu et avec carence", "Uniquement aux libéraux", "Seulement en cas d'hospitalisation"], "correct": [1], "multi": false, "expl": "Les IJ supposent un an d'affiliation, un revenu suffisant et un délai de carence.", "ref": "IJ"}, {"th": "3", "kind": "qcm", "ask": "L'invalidité du TNS comporte trois catégories. Laquelle est exacte ?", "options": ["PIPM 50 % · PITD 30 %", "PIPM 30 % · PITD 50 % · PITD + MTP 50 % + majoration tierce personne", "Les trois à 50 %", "PIPM 30 % · PITD 40 % · PITD + MTP 60 %"], "correct": [1], "multi": false, "expl": "PIPM (partielle) = 30 % ; PITD (totale) = 50 % ; PITD + MTP = 50 % + majoration tierce personne.", "ref": "invalidité"}, {"th": "3", "kind": "qcm", "ask": "Le capital décès du régime de base :", "options": ["Est proportionnel au dernier salaire", "Est forfaitaire et diffère selon que l'assuré était actif ou retraité", "N'est jamais versé", "Est réservé aux salariés"], "correct": [1], "multi": false, "expl": "Le capital décès est forfaitaire ; son montant diffère selon que l'assuré était actif ou retraité.", "ref": "décès"}, {"th": "3", "kind": "qcm", "ask": "La retraite de base et la retraite complémentaire du TNS fonctionnent :", "options": ["Toutes deux par points", "La base par trimestres, la complémentaire par points", "Par capitalisation", "Sans cotisation"], "correct": [1], "multi": false, "expl": "La retraite de base fonctionne par trimestres ; la complémentaire par points.", "ref": "retraite"}, {"th": "3", "kind": "qcm", "ask": "Concernant les orphelins, le régime de base des indépendants :", "options": ["Verse une rente d'orphelin", "Ne prévoit pas de rente d'orphelin", "Verse un capital doublé", "Verse une pension jusqu'à 25 ans"], "correct": [1], "multi": false, "expl": "Le régime de base ne prévoit pas de rente pour les orphelins.", "ref": "décès"}, {"th": "4", "kind": "qcm", "ask": "Face au salarié, la protection obligatoire du TNS est globalement :", "options": ["Plus étendue", "Plus limitée (contrepartie de cotisations plus faibles)", "Identique", "Sans cotisation"], "correct": [1], "multi": false, "expl": "Cotisations plus faibles = couverture obligatoire plus limitée.", "ref": "principe"}, {"th": "4", "kind": "qcm", "ask": "Concernant le chômage, le TNS :", "options": ["Perçoit la même allocation qu'un salarié", "N'a aucune assurance chômage (hors ATI très restrictif)", "Cotise obligatoirement à l'assurance chômage", "Perçoit 57 % de son revenu"], "correct": [1], "multi": false, "expl": "Le TNS n'a pas d'assurance chômage ; l'ATI est marginal.", "ref": "chômage"}, {"th": "4", "kind": "qcm", "ask": "Concernant les accidents du travail / maladies professionnelles, le TNS :", "options": ["A la même branche AT/MP que le salarié", "N'a aucune couverture obligatoire AT/MP", "Est couvert après 1 an", "Cotise à une branche dédiée"], "correct": [1], "multi": false, "expl": "Le régime obligatoire du TNS ne comporte pas de couverture AT/MP.", "ref": "AT/MP"}, {"th": "4", "kind": "qcm", "ask": "Sur l'arrêt de travail, le principal écart avec le salarié tient surtout :", "options": ["Au taux, toujours divisé par deux", "Au délai (1 an d'affiliation) et à la base de calcul, plus qu'au montant journalier", "À l'absence totale d'IJ", "À la durée illimitée pour le TNS"], "correct": [1], "multi": false, "expl": "À revenu égal, le montant journalier peut être comparable ; l'écart vient surtout du délai d'affiliation et de la base historique.", "ref": "arrêt de travail"}, {"th": "4", "kind": "qcm", "ask": "Pour chiffrer un déficit de protection, la bonne méthode est :", "options": ["Comparer les cotisations", "À revenu égal, comparer ce que touche un salarié et un TNS pour un même risque", "Additionner toutes les prestations", "Regarder uniquement la retraite"], "correct": [1], "multi": false, "expl": "On compare, pour un même revenu et un même risque, les prestations des deux régimes ; l'écart est le besoin.", "ref": "méthode"}, {"th": "4", "kind": "qcm", "ask": "Quels risques ne sont PAS couverts du tout par le régime obligatoire du TNS ? (plusieurs réponses)", "options": ["Le chômage", "Les accidents du travail / maladies professionnelles", "La maladie (frais de santé)", "La retraite"], "correct": [0, 1], "multi": true, "expl": "Chômage et AT/MP ne sont pas couverts. Santé et retraite le sont (parfois à un niveau plus faible).", "ref": "risques non couverts"}, {"th": "5", "kind": "qcm", "ask": "La loi Madelin permet au TNS :", "options": ["De cotiser moins à l'Urssaf", "De déduire de son revenu imposable les cotisations de contrats facultatifs", "D'obtenir une assurance chômage obligatoire", "De payer moins de TVA"], "correct": [1], "multi": false, "expl": "La loi Madelin offre un cadre fiscal pour déduire du revenu imposable les cotisations de contrats facultatifs (santé, prévoyance, retraite).", "ref": "principe"}, {"th": "5", "kind": "qcm", "ask": "La déduction Madelin réduit :", "options": ["Les cotisations sociales (Urssaf)", "L'impôt sur le revenu, mais pas les cotisations Urssaf", "La CSG uniquement", "La TVA"], "correct": [1], "multi": false, "expl": "Madelin réduit l'impôt sur le revenu ; l'Urssaf reste calculée sur le bénéfice avant déduction.", "ref": "principe"}, {"th": "5", "kind": "qcm", "ask": "Le plafond de déduction santé + prévoyance (enveloppe commune) est :", "options": ["10 % du PASS", "3,75 % du bénéfice + 7 % du PASS, dans la limite de 3 % de 8 PASS", "15 % du bénéfice", "Un forfait unique"], "correct": [1], "multi": false, "expl": "L'enveloppe santé/prévoyance = 3,75 % du bénéfice + 7 % du PASS, plafonnée à 3 % de 8 PASS.", "ref": "déduction santé/prévoyance"}, {"th": "5", "kind": "qcm", "ask": "Les remboursements de frais médicaux d'un contrat Madelin santé sont :", "options": ["Imposables au barème", "Exonérés d'impôt et de prélèvements sociaux", "Soumis à 9,1 % de PS", "Non déclarables mais taxés"], "correct": [1], "multi": false, "expl": "Les remboursements de frais de santé sont exonérés d'impôt et de prélèvements sociaux.", "ref": "fiscalité santé"}, {"th": "5", "kind": "qcm", "ask": "Le principe fiscal des contrats Madelin (hors santé) est :", "options": ["Déduit à l'entrée, exonéré à la sortie", "Déduit à l'entrée, imposé à la sortie", "Imposé à l'entrée, exonéré à la sortie", "Ni déduction ni imposition"], "correct": [1], "multi": false, "expl": "Les cotisations sont déduites à l'entrée ; les prestations (prévoyance, rentes retraite) sont imposées à la sortie. La santé est exonérée.", "ref": "principe fiscal"}, {"th": "5", "kind": "qcm", "ask": "Concernant le régime micro et le Madelin retraite : (plusieurs réponses)", "options": ["Les micro-entrepreneurs sont exclus de la déduction Madelin", "Le Madelin retraite est remplacé par le PER depuis la loi PACTE (2019)", "Les contrats Madelin retraite déjà ouverts continuent", "Madelin réduit les cotisations Urssaf"], "correct": [0, 1, 2], "multi": true, "expl": "Les micro-entrepreneurs sont exclus ; depuis 2019 le Madelin retraite est remplacé par le PER, mais les contrats existants continuent. Madelin ne réduit pas l'Urssaf.", "ref": "PACTE / micro"}, {"th": "1", "kind": "open", "ask": "Citez les quatre statuts de TNS et indiquez, pour l'artisan et le commerçant, le registre ou l'organe de rattachement.", "model": "Les quatre statuts sont : artisan, commerçant, profession libérale et gérant de société. L'artisan est immatriculé au répertoire des métiers (CMA). Le commerçant déclare son activité au tribunal de commerce et relève, depuis 2018, de la SSI (CPAM pour la maladie, Carsat pour la retraite, Urssaf pour le recouvrement).", "points": ["Artisan, commerçant, profession libérale, gérant de société", "Artisan → répertoire des métiers (CMA)", "Commerçant → tribunal de commerce, SSI"], "expl": "", "ref": "statuts", "minlen": 70}, {"th": "2", "kind": "open", "ask": "Expliquez l'assiette unique introduite en 2026 : comment se calcule-t-elle et quel problème résout-elle ?", "model": "Depuis 2026, les cotisations et la CSG-CRDS sont calculées sur une assiette unique : le revenu (brut de cotisations) fait l'objet d'un abattement forfaitaire de 26 %, encadré entre 1,76 % et 130 % du PASS. Avant, les cotisations étaient calculées sur le revenu net, ce qui créait un calcul en boucle. L'assiette unique supprime ce calcul itératif et simplifie le système.", "points": ["Assiette unique = revenu × (1 − 26 %)", "Abattement borné 1,76 % – 130 % du PASS", "Supprime le calcul itératif"], "expl": "", "ref": "réforme 2026", "minlen": 80}, {"th": "3", "kind": "open", "ask": "Présentez les trois catégories d'invalidité du régime des indépendants (nom, situation, taux).", "model": "Il existe trois catégories. La PIPM (incapacité partielle au métier) : l'assuré peut encore travailler, la pension vaut 30 % du revenu annuel moyen. La PITD (invalidité totale et définitive) : l'assuré ne peut plus travailler, la pension vaut 50 % du revenu annuel moyen. La PITD + MTP : l'assuré ne peut plus travailler et doit être assisté par une tierce personne ; il perçoit 50 % plus une majoration pour tierce personne (MTP). Chaque catégorie a un minimum garanti.", "points": ["PIPM : partielle, 30 %", "PITD : totale, 50 %", "PITD + MTP : 50 % + majoration tierce personne", "Sur le revenu annuel moyen (10 meilleures années)"], "expl": "", "ref": "invalidité", "minlen": 90}, {"th": "4", "kind": "open", "ask": "Citez deux risques que le régime obligatoire du TNS ne couvre pas, et expliquez pourquoi cela justifie une couverture complémentaire.", "model": "Le régime obligatoire ne couvre ni le chômage ni les accidents du travail / maladies professionnelles (AT/MP). En cas de perte d'activité, le TNS ne perçoit aucun revenu de remplacement ; en cas d'accident lié au travail, il n'a pas d'indemnisation spécifique. Ces manques exposent l'indépendant et ses proches à un risque financier important, ce qui justifie de souscrire une prévoyance facultative (contrats Madelin) pour compléter la couverture de base.", "points": ["Chômage : aucun revenu de remplacement", "AT/MP : aucune couverture", "D'où l'intérêt d'une complémentaire (Madelin)"], "expl": "", "ref": "déficits", "minlen": 80}, {"th": "5", "kind": "open", "ask": "Un client vous demande comment fonctionne la déduction Madelin et si ses prestations seront imposées. Répondez sur les deux enveloppes et la fiscalité.", "model": "Il existe deux enveloppes de déduction. Santé + prévoyance (commune) : 3,75 % du bénéfice + 7 % du PASS, dans la limite de 3 % de 8 PASS. Retraite : le plus élevé entre un forfait de 10 % du PASS et 10 % du bénéfice (≤ 8 PASS) augmenté de 15 % de la fraction entre 1 et 8 PASS. La déduction réduit l'impôt sur le revenu, pas les cotisations Urssaf. Côté prestations, ce qui est déduit à l'entrée est imposé à la sortie : les prestations de prévoyance et les rentes de retraite sont imposables ; seuls les remboursements de frais de santé sont exonérés.", "points": ["Santé/prévoyance : 3,75 % bénéfice + 7 % PASS, plafond 3 % de 8 PASS", "Retraite : max(10 % PASS ; 10 % + 15 %)", "Réduit l'IR, pas l'Urssaf", "Déduit à l'entrée = imposé à la sortie, sauf la santé"], "expl": "", "ref": "Madelin", "minlen": 100}], "HAS_THEMES": true, "PASS": 60, "PASS_OK": "Félicitations, vous avez validé l'évaluation finale du module. Déposez votre attestation PDF sur le LMS.", "PASS_KO": "Le seuil de validation est fixé à 60 %. Reprenez les séquences concernées (voir le bilan par thème) puis refaites l'évaluation.", "PDF": {"header": "TMK PERFORMANCES · FONDAMENTAUX CIBLE PRO — ÉVALUATION FINALE : LES STATUTS DES TNS", "att_title": "Attestation — Évaluation finale : Les statuts des TNS", "att_sub": "Fondamentaux Cible Pro · Module complet", "footer": "TMK Performances · Évaluation finale — Les statuts des TNS", "fname": "Attestation_evaluation_finale_TNS"}};
+const THEME_INFO = CFG.THEME_INFO, THEME_ORDER = CFG.THEME_ORDER;
+const QUESTIONS = CFG.QUESTIONS, TOTAL = QUESTIONS.length, HAS_THEMES = CFG.HAS_THEMES;
+const IS_OPEN = (c)=>c.kind==="open";
+const QCM_N = QUESTIONS.filter(c=>!IS_OPEN(c)).length;
+const OPEN_N = TOTAL - QCM_N;
+const PASS = CFG.PASS, PASS_OK = CFG.PASS_OK, PASS_KO = CFG.PASS_KO;
+const PDF = CFG.PDF;
+
+const state = { nom:"", prenom:"", answers:{}, validated:false, score:0, pdfGenerated:false, dateQuiz:null };
+
+document.getElementById("nom").addEventListener("input", checkIdentity);
+document.getElementById("prenom").addEventListener("input", checkIdentity);
+function checkIdentity(){const n=document.getElementById("nom").value.trim(),p=document.getElementById("prenom").value.trim();document.getElementById("btn-start").disabled=!(n&&p);}
+
+function startQuiz(){
+  state.nom=document.getElementById("nom").value.trim().toUpperCase();
+  let p=document.getElementById("prenom").value.trim();
+  state.prenom=p.charAt(0).toUpperCase()+p.slice(1).toLowerCase();
+  state.dateQuiz=new Date();
+  const full=state.prenom+" "+state.nom;
+  document.getElementById("stagiaire-name").textContent=full;
+  document.getElementById("stagiaire-name-2").textContent=full;
+  const d=state.dateQuiz.toLocaleDateString("fr-FR",{day:"2-digit",month:"long",year:"numeric"});
+  document.getElementById("date-quiz").textContent=d; document.getElementById("date-quiz-2").textContent=d;
+  document.getElementById("screen-identity").style.display="none";
+  document.getElementById("screen-quiz").style.display="block";
+  if(!HAS_THEMES) document.getElementById("recap-block").style.display="none";
+  render();
+}
+
+function themeTag(c){
+  if(!c.th || !THEME_INFO[c.th]) return "";
+  return `<span class="theme-tag">${c.th} · ${THEME_INFO[c.th].label}</span>`;
+}
+
+function render(){
+  const qcm=document.getElementById("qcm"); qcm.innerHTML="";
+  QUESTIONS.forEach((c,i)=>{
+    const tag=themeTag(c);
+    let control;
+    if(IS_OPEN(c)){
+      const prev=state.answers[i]||"";
+      control=`<div class="open-tag">Question ouverte</div><textarea class="oa" data-q="${i}" rows="4" placeholder="Rédigez votre réponse, comme à l'examen — en phrases complètes.">${prev}</textarea><div class="oa-hint">Réponse attendue : ${c.minlen} caractères minimum. La réponse attendue s'affichera après validation : c'est à vous de confronter la vôtre.</div>`;
+    } else if(c.multi){
+      let boxes="";
+      c.options.forEach((o,oi)=>{boxes+=`<label data-opt="${oi}"><input type="checkbox" data-q="${i}" value="${oi}"><span>${o}</span></label>`;});
+      control=`<div class="multi-tag">Plusieurs réponses</div><div class="checks" data-q="${i}">${boxes}</div>`;
+    } else {
+      let opts='<option value="">— choisir une réponse —</option>';
+      c.options.forEach((o,oi)=>opts+=`<option value="${oi}">${o}</option>`);
+      control=`<select class="cs" data-q="${i}">${opts}</select>`;
+    }
+    qcm.innerHTML+=`<div class="cq"><div class="ask"><span class="qn">${i+1}</span><span>${c.ask}${tag}</span></div>${control}<div class="cfb" id="cfb-${i}"></div></div>`;
+  });
+  document.querySelectorAll("select.cs").forEach(s=>s.addEventListener("change",onSelect));
+  document.querySelectorAll(".checks input").forEach(s=>s.addEventListener("change",onCheck));
+  document.querySelectorAll("textarea.oa").forEach(s=>s.addEventListener("input",onOpen));
+  update();
+}
+
+function onSelect(e){ if(state.validated)return; const i=+e.currentTarget.dataset.q,v=e.currentTarget.value; if(v==="") delete state.answers[i]; else state.answers[i]=+v; update(); }
+function onCheck(e){
+  if(state.validated)return; const i=+e.currentTarget.dataset.q;
+  const checked=[...document.querySelectorAll(`.checks input[data-q="${i}"]:checked`)].map(x=>+x.value);
+  if(checked.length===0) delete state.answers[i]; else state.answers[i]=checked.sort((a,b)=>a-b);
+  update();
+}
+
+function onOpen(e){
+  if(state.validated)return; const i=+e.currentTarget.dataset.q, v=e.currentTarget.value.trim();
+  if(v.length < QUESTIONS[i].minlen) delete state.answers[i]; else state.answers[i]=e.currentTarget.value.trim();
+  update();
+}
+
+function update(){
+  const n=Object.keys(state.answers).length;
+  document.getElementById("fill").style.width=(n/TOTAL*100)+"%";
+  document.getElementById("plabel").textContent=n+" / "+TOTAL+" répondu"+(n>1?"es":"");
+  document.getElementById("btn-validate").disabled=(n!==TOTAL);
+}
+
+function isCorrect(c, ans){
+  if(IS_OPEN(c)) return null;          // non notée automatiquement
+  if(ans==null) return false;
+  if(c.multi){
+    const a=[...ans].sort((x,y)=>x-y).join(","), g=[...c.correct].sort((x,y)=>x-y).join(",");
+    return a===g;
+  }
+  return ans===c.correct[0];
+}
+function answerLabel(c, ans){
+  if(ans==null) return "—";
+  if(c.multi) return ans.map(i=>c.options[i]).join(" ; ");
+  return c.options[ans];
+}
+function correctLabel(c){
+  return c.correct.map(i=>c.options[i]).join(" ; ");
+}
+
+function themeStats(){
+  const st={}; THEME_ORDER.forEach(t=>st[t]={ok:0,total:0});
+  QUESTIONS.forEach((c,i)=>{ if(IS_OPEN(c)||!st[c.th])return; st[c.th].total++; if(isCorrect(c,state.answers[i])) st[c.th].ok++; });
+  return st;
+}
+
+function validateQuiz(){
+  if(state.validated)return; state.validated=true;
+  let score=0;
+  QUESTIONS.forEach((c,i)=>{
+    const ans=state.answers[i], ok=isCorrect(c,ans); if(ok)score++;
+    if(IS_OPEN(c)){
+      const ta=document.querySelector(`textarea.oa[data-q="${i}"]`); ta.disabled=true;
+      const pts=(c.points&&c.points.length)?`<ul>${c.points.map(x=>`<li>${x}</li>`).join("")}</ul>`:"";
+      const rf=c.ref?`<p class="ref">${c.ref}</p>`:"";
+      const f0=document.getElementById("cfb-"+i);
+      f0.className="cfb good";
+      f0.innerHTML=`<div class="model"><h5>La réponse attendue</h5><p>${c.model}</p>${pts}${rf}<p class="note">Cette question n'est pas notée automatiquement : confrontez votre rédaction à la réponse attendue. Votre texte et la réponse attendue figurent tous deux dans votre attestation PDF.</p></div>`;
+      requestAnimationFrame(()=>f0.classList.add("show"));
+      return;
+    }
+    if(c.multi){
+      const cont=document.querySelector(`.checks[data-q="${i}"]`);
+      cont.querySelectorAll("input").forEach(x=>x.disabled=true);
+      c.correct.forEach(g=>cont.querySelector(`label[data-opt="${g}"]`).classList.add("ok"));
+      (ans||[]).forEach(a=>{ if(!c.correct.includes(a)) cont.querySelector(`label[data-opt="${a}"]`).classList.add("ko"); });
+    } else {
+      const sel=document.querySelector(`select.cs[data-q="${i}"]`); sel.disabled=true;
+      sel.classList.add(ok?"ok":"ko");
+    }
+    const f=document.getElementById("cfb-"+i);
+    f.className="cfb "+(ok?"good":"bad");
+    const vd=ok?"Exact.":((c.multi?"Bonnes réponses : ":"Bonne réponse : ")+correctLabel(c)+".");
+    const refLine=c.ref?`<br><span class="ref">${c.ref}</span>`:"";
+    f.innerHTML=`<span class="vd">${vd}</span> ${c.expl}${refLine}`;
+    requestAnimationFrame(()=>f.classList.add("show"));
+  });
+  state.score=score;
+  document.getElementById("score").textContent=score;
+  document.getElementById("btn-validate").disabled=true;
+  generatePDF();
+  showResults();
+}
+
+function showResults(){
+  const pct=Math.round(state.score/QCM_N*100);
+  document.getElementById("screen-result").style.display="block";
+  document.getElementById("score-value").textContent=state.score+"/"+QCM_N;
+  const sl=document.getElementById("score-label"); if(sl) sl.textContent = OPEN_N ? "questions à choix" : "questions";
+  const c=document.getElementById("score-circle"),m=document.getElementById("result-message"),d=document.getElementById("result-detail");
+  const suffix = OPEN_N ? " Vos "+OPEN_N+" question"+(OPEN_N>1?"s":"")+" ouverte"+(OPEN_N>1?"s ne sont":" n'est")+" pas notée"+(OPEN_N>1?"s":"")+" : confrontez votre rédaction à la réponse attendue, affichée sous chacune." : "";
+  c.className="score-circle";
+  if(PASS){
+    const ok = pct>=PASS;
+    c.classList.add(ok?(pct>=90?"excellent":"good"):(pct>=50?"average":"poor"));
+    m.textContent = ok ? "Objectif atteint" : "Objectif non atteint";
+    d.textContent = (ok?"Vous êtes au-dessus du seuil de "+PASS+" %.":"Vous êtes en dessous du seuil de "+PASS+" %.")+suffix;
+    const b=document.getElementById("pass-banner");
+    b.className="pass-banner "+(ok?"ok":"ko");
+    b.innerHTML = ok
+      ? `<b>Réussite — ${pct} % de bonnes réponses</b>${PASS_OK||"Vous avez atteint le seuil de "+PASS+" %. Les acquis de la journée sont consolidés : vous pouvez aborder la suite du parcours."}`
+      : `<b>Seuil non atteint — ${pct} % de bonnes réponses</b>${PASS_KO||"Le seuil de réussite est fixé à "+PASS+" %. Reprenez les fiches mémo et les séquences des thèmes en rouge, puis <strong>refaites ce QCM afin de vous entraîner</strong> : c'est en le repassant que les automatismes s'installent."}`;
+    b.style.display="block";
+  }
+  else if(pct>=90){c.classList.add("excellent");m.textContent="Évaluation validée — Excellent !";d.textContent="Vous maîtrisez l'ensemble des notions du module."+suffix;}
+  else if(pct>=70){c.classList.add("good");m.textContent="Évaluation validée";d.textContent="Bon niveau global. Le détail commenté de vos réponses figure ci-dessus."+suffix;}
+  else if(pct>=50){c.classList.add("average");m.textContent="Presque — à consolider";d.textContent="Acquis partiels. Le détail commenté de chaque réponse figure ci-dessus."+suffix;}
+  else{c.classList.add("poor");m.textContent="À retravailler";d.textContent="Le détail commenté reprend la bonne réponse et l'explication de chaque question."+suffix;}
+
+  if(HAS_THEMES){
+    const st=themeStats(); let html="";
+    THEME_ORDER.forEach(t=>{
+      const s=st[t]; if(!s||s.total===0) return;
+      const full=(s.ok===s.total);
+      const color=full?"var(--ok)":(s.ok===0?"var(--ko)":"var(--amber)");
+      html+=`<div class="recap-row"><span class="dot" style="background:${color}"></span><span class="lab">${t} · ${THEME_INFO[t].label}</span><span class="sc">${s.ok} / ${s.total}</span></div>`;
+    });
+    document.getElementById("recap-list").innerHTML=html;
+  }
+  const np=document.getElementById("note-pdf");
+  if(state.pdfGenerated){np.textContent="✓ Votre attestation PDF a été générée et téléchargée pour cette session. Vous pouvez refaire l'évaluation, mais aucun nouveau PDF ne sera généré.";np.style.display="block";}
+  document.getElementById("screen-result").scrollIntoView({behavior:"smooth",block:"start"});
+}
+
+function restartQuiz(){
+  state.answers={};state.validated=false;state.score=0;state.dateQuiz=new Date();
+  const d=state.dateQuiz.toLocaleDateString("fr-FR",{day:"2-digit",month:"long",year:"numeric"});
+  document.getElementById("date-quiz").textContent=d;document.getElementById("date-quiz-2").textContent=d;
+  document.getElementById("score").textContent="—";
+  const bv=document.getElementById("btn-validate");
+  if(state.pdfGenerated) bv.textContent="Valider l'évaluation";
+  document.getElementById("note-pdf").style.display="none";
+  const pb=document.getElementById("pass-banner"); if(pb) pb.style.display="none";
+  document.getElementById("screen-result").style.display="none";
+  render(); window.scrollTo({top:0,behavior:"smooth"});
+}
+
+/* ───────── PDF (attestation) ───────── */
+function generatePDF(){
+  if(state.pdfGenerated)return;
+  if(!window.jspdf||!window.jspdf.jsPDF){return;}
+  const { jsPDF }=window.jspdf;
+  const doc=new jsPDF({unit:"mm",format:"a4"});
+  const pageW=doc.internal.pageSize.getWidth(), pageH=doc.internal.pageSize.getHeight();
+  const margin=18; let y=0;
+  const NAVY=[22,36,59],BLUE=[31,78,121],OKC=[47,122,79],KOC=[178,59,59],AMB=[181,133,42];
+  const footer=()=>{const tp=doc.internal.getNumberOfPages();for(let i=1;i<=tp;i++){doc.setPage(i);doc.setFont("helvetica","italic");doc.setFontSize(8);doc.setTextColor(150,150,150);doc.text(`Page ${i} / ${tp}  —  ${PDF.footer}`,pageW/2,pageH-8,{align:"center"});}};
+  const ensure=(h)=>{if(y+h>pageH-18){doc.addPage();y=margin;}};
+
+  doc.setFillColor(...NAVY);doc.rect(0,0,pageW,38,"F");
+  doc.setTextColor(255,255,255);doc.setFont("helvetica","bold");doc.setFontSize(9);
+  doc.text(PDF.header,margin,13);
+  doc.setFontSize(15);doc.text(PDF.att_title,margin,24);
+  doc.setFont("helvetica","normal");doc.setFontSize(10);
+  doc.text(PDF.att_sub,margin,32);
+  y=50;
+
+  doc.setFillColor(239,234,223);doc.rect(margin,y,pageW-2*margin,26,"F");
+  doc.setTextColor(...BLUE);doc.setFont("helvetica","bold");doc.setFontSize(11);doc.text("Stagiaire",margin+4,y+7);
+  doc.setFont("helvetica","normal");doc.setTextColor(40,40,40);doc.setFontSize(12);doc.text(`${state.prenom} ${state.nom}`,margin+4,y+15);
+  doc.setFontSize(9);doc.setTextColor(100,100,100);
+  const dS=state.dateQuiz.toLocaleDateString("fr-FR",{day:"2-digit",month:"long",year:"numeric"});
+  const tS=state.dateQuiz.toLocaleTimeString("fr-FR",{hour:"2-digit",minute:"2-digit"});
+  doc.text(`Évaluation réalisée le ${dS} à ${tS}`,margin+4,y+22);
+  y+=36;
+
+  const pct=Math.round(state.score/QCM_N*100);
+  let col=KOC,lab="À retravailler";
+  if(PASS){ const ok=pct>=PASS; col=ok?OKC:AMB; lab=ok?"Réussite":"Seuil non atteint"; }
+  else if(pct>=90){col=OKC;lab="Excellent";}else if(pct>=70){col=BLUE;lab="Validé";}else if(pct>=50){col=AMB;lab="À consolider";}
+  doc.setFillColor(...col);doc.rect(margin,y,pageW-2*margin,28,"F");
+  doc.setTextColor(255,255,255);doc.setFont("helvetica","bold");doc.setFontSize(22);doc.text(`${state.score} / ${QCM_N}`,margin+6,y+13);
+  doc.setFontSize(11);doc.text(`(${pct}%)  —  questions à choix`,margin+6,y+22);
+  doc.setFontSize(13);doc.text(lab,pageW-margin-6,y+17,{align:"right"});
+  y+=34;
+
+  if(PASS){
+    const ok=pct>=PASS;
+    const msg = ok ? `Seuil de reussite : ${PASS} %. Objectif atteint.`
+                   : `Seuil de reussite : ${PASS} %. Objectif non atteint : refaites ce QCM afin de vous entrainer.`;
+    doc.setFont("helvetica","italic");doc.setFontSize(9);doc.setTextColor(...(ok?OKC:AMB));
+    doc.text(msg,margin,y+2); y+=8;
+  }
+  if(OPEN_N){
+    doc.setFont("helvetica","italic");doc.setFontSize(8.5);doc.setTextColor(120,120,120);
+    doc.text(`${OPEN_N} question(s) ouverte(s) : non notees automatiquement — voir la section dediee en fin de document.`,margin,y+2);
+    y+=8;
+  }
+  y+=2;
+
+  if(HAS_THEMES){
+    const st=themeStats();
+    doc.setFillColor(...NAVY);doc.rect(margin,y,pageW-2*margin,9,"F");
+    doc.setTextColor(255,255,255);doc.setFont("helvetica","bold");doc.setFontSize(11);doc.text("Bilan par thème",margin+4,y+6.2);y+=12;
+    THEME_ORDER.forEach(t=>{
+      const s=st[t]; if(!s||s.total===0) return;
+      const full=(s.ok===s.total); const cc=full?OKC:(s.ok===0?KOC:AMB);
+      ensure(7);
+      doc.setFillColor(...cc);doc.circle(margin+3,y-0.5,1.4,"F");
+      doc.setFont("helvetica","normal");doc.setFontSize(9.5);doc.setTextColor(55,55,55);
+      doc.text(`${t} · ${THEME_INFO[t].label}`,margin+8,y);
+      doc.setFont("helvetica","bold");doc.text(`${s.ok} / ${s.total}`,margin+92,y);
+      y+=6.5;
+    });
+    y+=4;
+  }
+
+  doc.setFillColor(...NAVY);doc.rect(margin,y,pageW-2*margin,9,"F");
+  doc.setTextColor(255,255,255);doc.setFont("helvetica","bold");doc.setFontSize(11);doc.text("Détail des réponses",margin+4,y+6.2);
+  doc.setFontSize(9);doc.text(`${QCM_N} question${QCM_N>1?"s":""} à choix`,pageW-margin-4,y+6.2,{align:"right"});y+=12;
+
+  QUESTIONS.forEach((c,i)=>{
+    if(IS_OPEN(c)) return;
+    const ans=state.answers[i], ok=isCorrect(c,ans);
+    const head=(c.th?`[${c.th}] `:"")+c.ask;
+    const qLines=doc.splitTextToSize(`${i+1}. ${head}`,pageW-2*margin-16);
+    const yLines=doc.splitTextToSize(`Votre réponse : ${answerLabel(c,ans)}`,pageW-2*margin-10);
+    const gLines=doc.splitTextToSize(`${c.multi?"Bonnes réponses":"Bonne réponse"} : ${correctLabel(c)}`,pageW-2*margin-10);
+    const eLines=doc.splitTextToSize(c.expl+(c.ref?"  ("+c.ref+")":""),pageW-2*margin-10);
+    const h=6+qLines.length*4+4+yLines.length*4+gLines.length*4+4+eLines.length*4+6;
+    ensure(h);
+    doc.setFillColor(ok?OKC[0]:KOC[0],ok?OKC[1]:KOC[1],ok?OKC[2]:KOC[2]);doc.rect(margin,y,2,h-3,"F");
+    doc.setFont("helvetica","bold");doc.setFontSize(9.5);doc.setTextColor(ok?OKC[0]:KOC[0],ok?OKC[1]:KOC[1],ok?OKC[2]:KOC[2]);doc.text(ok?"[OK]":"[X]",margin+5,y+5);
+    doc.setTextColor(55,55,55);doc.text(qLines,margin+16,y+5);
+    let yy=y+5+qLines.length*4+2;
+    doc.setFont("helvetica","bold");doc.setFontSize(8.5);doc.setTextColor(100,100,100);doc.text(yLines,margin+5,yy);yy+=yLines.length*4;
+    doc.setTextColor(40,100,60);doc.text(gLines,margin+5,yy);yy+=gLines.length*4+1;
+    doc.setFont("helvetica","italic");doc.setFontSize(8.5);doc.setTextColor(90,90,90);doc.text(eLines,margin+5,yy);
+    y+=h;
+  });
+
+  if(OPEN_N){
+    ensure(20);
+    doc.setFillColor(...NAVY);doc.rect(margin,y,pageW-2*margin,9,"F");
+    doc.setTextColor(255,255,255);doc.setFont("helvetica","bold");doc.setFontSize(11);doc.text("Questions ouvertes — votre rédaction et la réponse attendue",margin+4,y+6.2);
+    doc.setFontSize(9);doc.text(`${OPEN_N} question${OPEN_N>1?"s":""}`,pageW-margin-4,y+6.2,{align:"right"});y+=12;
+    doc.setFont("helvetica","italic");doc.setFontSize(8.5);doc.setTextColor(120,120,120);
+    const iL=doc.splitTextToSize("Ces questions ne sont pas notees automatiquement : aucune correction de texte libre ne serait fiable. Confrontez votre redaction a la reponse attendue, et sollicitez votre referent pedagogique en cas de doute.",pageW-2*margin);
+    doc.text(iL,margin,y); y+=iL.length*4+4;
+
+    let n=0;
+    QUESTIONS.forEach((c,i)=>{
+      if(!IS_OPEN(c)) return; n++;
+      const mine=(state.answers[i]||"— non renseignée —");
+      const qLines=doc.splitTextToSize(`${n}. ${(c.th?`[${c.th}] `:"")+c.ask}`,pageW-2*margin-10);
+      const aLines=doc.splitTextToSize(mine,pageW-2*margin-14);
+      const mLines=doc.splitTextToSize(c.model,pageW-2*margin-14);
+      const pLines=(c.points||[]).map(x=>doc.splitTextToSize("- "+x,pageW-2*margin-16)).flat();
+      const h=6+qLines.length*4+6+aLines.length*4+6+mLines.length*4+pLines.length*4+(c.ref?5:0)+8;
+      ensure(Math.min(h,pageH-2*margin));
+      doc.setFillColor(...BLUE);doc.rect(margin,y,2,Math.min(h-3,pageH-y-20),"F");
+      doc.setFont("helvetica","bold");doc.setFontSize(9.5);doc.setTextColor(55,55,55);
+      doc.text(qLines,margin+6,y+5); let yy=y+5+qLines.length*4+3;
+      doc.setFont("helvetica","bold");doc.setFontSize(8.5);doc.setTextColor(100,100,100);doc.text("Votre reponse :",margin+6,yy);yy+=4;
+      doc.setFont("helvetica","normal");doc.setTextColor(60,60,60);
+      aLines.forEach(l=>{ensure(5);doc.text(l,margin+10,yy);yy+=4;});
+      yy+=3;
+      doc.setFont("helvetica","bold");doc.setTextColor(40,100,60);ensure(5);doc.text("Reponse attendue :",margin+6,yy);yy+=4;
+      doc.setFont("helvetica","normal");doc.setTextColor(60,80,65);
+      mLines.forEach(l=>{ensure(5);doc.text(l,margin+10,yy);yy+=4;});
+      pLines.forEach(l=>{ensure(5);doc.text(l,margin+12,yy);yy+=4;});
+      if(c.ref){doc.setFont("helvetica","italic");doc.setTextColor(150,120,80);ensure(5);doc.text(c.ref,margin+10,yy+1);yy+=5;}
+      y=yy+6;
+    });
+  }
+
+  footer();
+  const safe=(s)=>s.normalize("NFD").replace(/[\u0300-\u036f]/g,"").replace(/[^a-zA-Z0-9]/g,"_");
+  const df=state.dateQuiz.toISOString().slice(0,10);
+  doc.save(`${PDF.fname}_${safe(state.nom)}_${safe(state.prenom)}_${df}.pdf`);
+
+  state.pdfGenerated=true;
+}
+</script>
+</body>
+</html>
